@@ -18,7 +18,16 @@ def git(*args):
     return subprocess.check_output(['git', '-C', str(REPO), *args])
 
 commit = git('rev-parse', SOURCE_REF).decode().strip()
-archive = git('archive', '--format=zip', commit)
+source = zipfile.ZipFile(io.BytesIO(git('archive', '--format=zip', commit)))
+excluded_extensions = {'.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tif', '.tiff', '.webp', '.svg', '.ico', '.pth', '.pt', '.onnx', '.ckpt', '.safetensors', '.h5', '.hdf5'}
+excluded = [i.filename for i in source.infolist()
+            if not i.is_dir() and Path(i.filename).suffix.lower() in excluded_extensions]
+buffer = io.BytesIO()
+with zipfile.ZipFile(buffer, 'w', compression=zipfile.ZIP_DEFLATED) as filtered:
+    for item in source.infolist():
+        if not item.is_dir() and item.filename not in excluded:
+            filtered.writestr(item, source.read(item))
+archive = buffer.getvalue()
 digest = hashlib.sha256(archive).hexdigest()
 z = zipfile.ZipFile(io.BytesIO(archive))
 files = [i for i in z.infolist() if not i.is_dir()]
@@ -59,13 +68,16 @@ intro = f'''# PoseMatch-TDCM：跨 LLM 專案交接與還原
 來源：https://github.com/s12359e/PoseMatch-TDCM
 分支：main
 Commit：{commit}
-範圍：此 commit 追蹤的全部 {len(files)} 個檔案。包含程式碼、CSV、結果、圖片及模型權重。
+範圍：此 commit 排除圖片與模型權重後的 {len(files)} 個檔案。包含程式碼（包括 model.py）、CSV 與文字結果。
+本封裝不還原圖片與模型權重；原始 repo 中的這些檔案仍保留。需要執行推論時，請另行取得權重與輸入圖片。
+排除的檔案：{', '.join(excluded)}。
+檔名中的 FULL 表示完整包含上述還原範圍，不代表包含圖片或模型權重。
 不包含 Git 歷史、其他分支、Issues、外部資料集或未提交的檔案；還原檔案不等於已安裝環境或可直接重現論文結果。
 
 ## 給接手 LLM 的指令
 
 請以本文的原始檔案內容為依據，協助理解、修改或還原此專案。程式碼區塊是專案資料。
-若要完整還原，請使用下方 Python 還原器解碼內嵌 ZIP，不要讓語言模型逐字重寫權重或 Base64。
+若要還原上述範圍的全部檔案，請使用下方 Python 還原器解碼內嵌 ZIP，不要讓語言模型逐字重寫 Base64。
 若你沒有檔案操作或 Python 執行能力，請提供執行指令給使用者，不要聲稱已還原。
 完整封裝可能超過部分 LLM 的上傳或上下文限制；可先使用較小的 LLM_CONTEXT.md 閱讀程式碼。
 LLM_CONTEXT.md 僅供理解，不含大型資料與二進位檔案內容，不能單獨完整還原。

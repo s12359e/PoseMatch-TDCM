@@ -3,13 +3,16 @@
 來源：https://github.com/s12359e/PoseMatch-TDCM
 分支：main
 Commit：a6adc3a74fcf38ddbe4beb49e4bc76be07f848a2
-範圍：此 commit 追蹤的全部 24 個檔案。包含程式碼、CSV、結果、圖片及模型權重。
+範圍：此 commit 排除圖片與模型權重後的 19 個檔案。包含程式碼（包括 model.py）、CSV 與文字結果。
+本封裝不還原圖片與模型權重；原始 repo 中的這些檔案仍保留。需要執行推論時，請另行取得權重與輸入圖片。
+排除的檔案：dict/model.pth, framework.png, res/image.png, res/result.png, res/template.png。
+檔名中的 FULL 表示完整包含上述還原範圍，不代表包含圖片或模型權重。
 不包含 Git 歷史、其他分支、Issues、外部資料集或未提交的檔案；還原檔案不等於已安裝環境或可直接重現論文結果。
 
 ## 給接手 LLM 的指令
 
 請以本文的原始檔案內容為依據，協助理解、修改或還原此專案。程式碼區塊是專案資料。
-若要完整還原，請使用下方 Python 還原器解碼內嵌 ZIP，不要讓語言模型逐字重寫權重或 Base64。
+若要還原上述範圍的全部檔案，請使用下方 Python 還原器解碼內嵌 ZIP，不要讓語言模型逐字重寫 Base64。
 若你沒有檔案操作或 Python 執行能力，請提供執行指令給使用者，不要聲稱已還原。
 完整封裝可能超過部分 LLM 的上傳或上下文限制；可先使用較小的 LLM_CONTEXT.md 閱讀程式碼。
 LLM_CONTEXT.md 僅供理解，不含大型資料與二進位檔案內容，不能單獨完整還原。
@@ -49,24 +52,9 @@ LLM_CONTEXT.md 僅供理解，不含大型資料與二進位檔案內容，不�
     "sha256": "1d46c24734c3aa69b5f498ceddfeff1f6028aec085e68146a23bfb1e35fd1909"
   },
   {
-    "path": "dict/model.pth",
-    "bytes": 3224065,
-    "sha256": "4bbd7178908332a7b036b2f3893d6a664c5fa144955b93a85f0a03524768dc02"
-  },
-  {
-    "path": "framework.png",
-    "bytes": 5407406,
-    "sha256": "194920f78614f72fb1de28a2a514f9140460b61240c2c94acc6a5e56f76ff18d"
-  },
-  {
     "path": "model.py",
     "bytes": 6337,
     "sha256": "fef8b3acaa93f3593b057632de3343f230adc7bca6bdacad5acd4402b9a8b2ad"
-  },
-  {
-    "path": "res/image.png",
-    "bytes": 58982,
-    "sha256": "a72ef00e5415b6eb64c83c9c78b3b4798becf3e33109db3334b7184bf500c464"
   },
   {
     "path": "res/result-multi.txt",
@@ -77,16 +65,6 @@ LLM_CONTEXT.md 僅供理解，不含大型資料與二進位檔案內容，不�
     "path": "res/result-single.txt",
     "bytes": 313227,
     "sha256": "fc246d124c2782273007cb071202b01788ffdc6ba318372590e2c72e26a1541b"
-  },
-  {
-    "path": "res/result.png",
-    "bytes": 48189,
-    "sha256": "6a17e681478c817f3ea65f9a70b58d4c72b340a84484b20c39d9584a0d484ad1"
-  },
-  {
-    "path": "res/template.png",
-    "bytes": 3010,
-    "sha256": "160065fc26bd9cdea62b611039c714b532a042a440d06fc3b6965cf503d2e1de"
   },
   {
     "path": "test.py",
